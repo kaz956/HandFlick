@@ -6,7 +6,7 @@ This visionOS app compares three assigned conditions: **HandFlick**, **Default K
 
 - `ExperimentManager.swift` owns counterbalancing, phrase scheduling, trial flow, text-change classification, and experiment state.
 - `HandFlickTracking.swift` uses public ARKit Hand Tracking. It constructs 12 finger-segment line geometries, maintains a left-hand-relative coordinate basis, uses contact/release hysteresis, and emits a `HandFlickPrimitive` rather than a character.
-- `ExperimentModels.swift` keeps the recognition primitive, layout/mapping, thresholds, and experiment parameters separate. The default English key entries deliberately have empty direction maps: populate `characterByAction` only after confirming the deployed Vision Pro system-flick layout during a pilot. This avoids silently assuming a layout.
+- `ExperimentModels.swift` keeps the recognition primitive, layout/mapping, thresholds, and experiment parameters separate. Confirm `characterByAction` against the intended layout during a pilot before collecting data.
 - `ExperimentLogger.swift` creates a new Documents/`HandFlickData` session directory and buffers append-only CSV output. It flushes after every trial and condition questionnaire.
 - `ExperimentViews.swift` contains setup, instruction, transcription, breaks, questionnaires, and completion UI.
 
@@ -23,3 +23,11 @@ Each session gets a unique directory containing `trial_log.csv`, `event_log.csv`
 ## Permissions and limitations
 
 The app requires the Hand Tracking usage permission for HandFlick. ARKit tracking loss cancels the active gesture and records tracking-loss/recovery events. The OS does not publicly expose the direct-touch versus gaze-and-pinch source of system-keyboard events; the assigned condition, instructions, and text changes are logged instead. The app requests lowercase ASCII entry and disables autocorrection where SwiftUI exposes it, but visionOS may retain system-level prediction or keyboard behavior that the app cannot control. Run on Vision Pro / a target SDK that exposes `HandTrackingProvider`; no private APIs are used.
+
+## Build and run
+
+Open `HandFlick.xcodeproj` in Xcode with a visionOS 26.1 or later SDK. Select your own signing Team and, if needed, a unique Bundle Identifier. Run the HandFlick target on Apple Vision Pro for hand-tracking experiments; the simulator does not reproduce physical hand tracking. No external API key is required. The local `Packages/RealityKitContent` package is part of the project and must remain available.
+
+## Participant privacy
+
+Use pseudonymous participant and session IDs, rather than names or email addresses. Session exports include transcription text, hand motion, timestamps and questionnaire responses. Obtain consent and store exports with restricted access. `HandFlickData/` and the generated log filenames are ignored; bundled `Phrases.json` remains tracked. Keep raw participant data out of Git, including screenshots, archives and copies under different names. Use ignored `private-data/` or `exports/` folders for local exports.

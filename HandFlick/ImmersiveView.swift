@@ -2,7 +2,6 @@
 //  ImmersiveView.swift
 //  HandFlick
 //
-//  Created by 一居和毅 on 2026/08/20.
 //
 
 import SwiftUI
